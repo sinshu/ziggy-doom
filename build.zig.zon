@@ -1,0 +1,12 @@
+.{
+    .name = .ziggy_doom,
+    .version = "0.15.2",
+    .dependencies = .{
+        .raylib = .{
+            .url = "git+https://github.com/raysan5/raylib.git#8ae2c9cf5f0f69bfca6ea4d794905a06e061509b",
+            .hash = "raylib-5.6.0-dev-whq8uP9NAwVOUEatQKb7ywqXZnCMIhuBuwRkq2HqQTe7",
+        },
+    },
+    .paths = .{""},
+    .fingerprint = 0xd6d913c6b33244ba,
+}
