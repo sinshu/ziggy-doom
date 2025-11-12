@@ -27,11 +27,12 @@
 ********************************************************************************************/
 
 #include "raylib.h"
+#include "doomgeneric.h"
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main(int argc, char **argv)
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -42,6 +43,8 @@ int main(void)
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
+	
+	doomgeneric_Create(argc, argv);
 
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
@@ -69,4 +72,28 @@ int main(void)
     //--------------------------------------------------------------------------------------
 
     return 0;
+}
+
+void DG_Init()
+{
+}
+
+void DG_DrawFrame()
+{
+}
+
+void DG_SleepMs(int ms)
+{
+}
+
+int DG_GetTicksMs()
+{
+}
+
+int DG_GetKey(int* pressed, unsigned char* key)
+{
+}
+
+void DG_SetWindowTitle(const char * title)
+{
 }
