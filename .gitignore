@@ -27,6 +27,7 @@
 
 # Game data: provide your own IWAD/PWAD (also match uppercase extensions)
 *.[wW][aA][dD]
+*.[sS][fF]2
 
 # Local Doom configuration, saves and recorded demos
 /*.cfg

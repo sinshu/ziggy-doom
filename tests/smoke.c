@@ -13,6 +13,7 @@
 #include "sounds.h"
 #include "m_argv.h"
 #include <assert.h>
+#include "music_checks.h"
 
 static int frames, start_tic;
 static bool ready;
@@ -50,7 +51,10 @@ int main(int argc, char **argv)
     puts("SMOKE: starting engine");
     doomgeneric_Create(argc, argv);
     puts("SMOKE: engine initialized");
-    if (M_CheckParm("-nosound") || M_CheckParm("-nosfx"))
+    if (M_CheckParm("-musiccheck")) CheckMusic();
+    if (M_CheckParm("-nomusic") || M_CheckParm("-nosound") || M_CheckParm("-expectnomusic"))
+        assert(!I_MusicIsPlaying());
+    if (M_CheckParm("-nosound") || (M_CheckParm("-nosfx") && M_CheckParm("-nomusic")))
         assert(!IsAudioDeviceReady());
     if (M_CheckParm("-soundcheck")) {
         assert(IsAudioDeviceReady());

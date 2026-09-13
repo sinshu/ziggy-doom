@@ -9,6 +9,19 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
+    const synth_mod = b.createModule(.{
+        .root_source_file = b.path("src/music_synth.zig"),
+        .target = target,
+        .optimize = .ReleaseSafe,
+        .link_libc = true,
+    });
+    synth_mod.addImport("ziggysynth", b.createModule(.{
+        .root_source_file = b.path("vendor/ziggysynth/ziggysynth.zig"),
+        .target = target,
+        .optimize = .ReleaseSafe,
+    }));
+    const synth_lib = b.addLibrary(.{ .name = "music-synth", .linkage = .static, .root_module = synth_mod });
+    mod.linkLibrary(synth_lib);
     mod.addIncludePath(b.path("vendor/doomgeneric"));
     mod.addCMacro("DOOMGENERIC_RESX", "320");
     mod.addCMacro("DOOMGENERIC_RESY", "200");
@@ -19,7 +32,7 @@ pub fn build(b: *std.Build) void {
         .flags = &.{ "-std=c99", "-Wall", "-Wextra" },
     });
     mod.addCSourceFiles(.{
-        .files = &.{"src/i_raylibsound.c"},
+        .files = &.{ "src/i_raylibsound.c", "src/i_raylibmusic.c", "src/audio_device.c", "vendor/chocolate-doom/mus2mid.c" },
         .flags = &.{ "-std=c99", "-Wall", "-Wextra" },
     });
     mod.addCSourceFiles(.{

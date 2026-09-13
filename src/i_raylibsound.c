@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 #include "raylib.h"
+#include "audio_device.h"
 #include "dmx_sound.h"
 #include "i_sound.h"
 #include "w_wad.h"
@@ -51,7 +52,7 @@ static void Shutdown(void)
     free(channels);
     channels = NULL;
     channel_count = 0;
-    CloseAudioDevice();
+    DG_ReleaseAudio();
     initialized = false;
 }
 
@@ -61,8 +62,7 @@ static boolean Init(boolean use_prefix)
     if (snd_channels <= 0) return false;
     channels = calloc((size_t)snd_channels, sizeof(*channels));
     if (!channels) return false;
-    InitAudioDevice();
-    if (!IsAudioDeviceReady()) {
+    if (!DG_AcquireAudio()) {
         free(channels);
         channels = NULL;
         fputs("Audio device unavailable; continuing without sound effects.\n", stderr);

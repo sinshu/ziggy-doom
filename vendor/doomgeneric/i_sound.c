@@ -130,8 +130,8 @@ static void InitSfxModule(boolean use_sfx_prefix)
 
 static void InitMusicModule(void)
 {
-#if defined(FEATURE_SOUND) && !defined(DG_RAYLIB_SOUND)
-    music_module = &DG_music_module;
+#ifdef FEATURE_SOUND
+    if (snd_musicdevice != SNDDEVICE_NONE) music_module = &DG_music_module;
 #endif /* FEATURE_SOUND */
 }
 

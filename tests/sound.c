@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // Exercise the real backend with a deterministic audio device and WAD substitute.
 #include "../src/i_raylibsound.c"
+#include "../src/audio_device.c"
 #include <assert.h>
 #include <string.h>
 

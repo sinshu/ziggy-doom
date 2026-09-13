@@ -13,7 +13,8 @@ Local source changes:
   called exit with ORIGCODE enabled, so menu Quit returned to the game loop.
 Build definitions: DOOMGENERIC_RESX=320, DOOMGENERIC_RESY=200.
 FEATURE_SOUND and DG_RAYLIB_SOUND are defined. src/i_raylibsound.c supplies
-DG_sound_module; i_sound.c excludes the SDL header, libsamplerate bindings,
-and music module registration for this backend. Music remains disabled.
+DG_sound_module; i_sound.c excludes the SDL header and libsamplerate bindings
+for this backend. Music registration uses DG_music_module from
+src/i_raylibmusic.c unless snd_musicdevice is NONE or disabled via command line.
 The engine is compiled as GNU C99 with wrapping signed arithmetic and without
 undefined-behavior sanitization to accommodate legacy Doom arithmetic.

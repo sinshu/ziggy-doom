@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 #include "raylib.h"
+#include "music_synth.h"
 
 // Preserve raylib enum values before doomkeys.h defines same-named macros.
 enum {
@@ -46,6 +47,7 @@ static void cleanup(void)
 
 static void poll_input(void)
 {
+    DG_PollMusic();
     // Pump events even while the engine waits for its next 35 Hz tic.
     PollInputEvents();
     if (WindowShouldClose()) I_Quit();
