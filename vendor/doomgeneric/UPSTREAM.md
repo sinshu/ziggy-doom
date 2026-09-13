@@ -12,6 +12,8 @@ Local source changes:
 - i_system.c: always exit after I_Quit runs shutdown callbacks. Upstream only
   called exit with ORIGCODE enabled, so menu Quit returned to the game loop.
 Build definitions: DOOMGENERIC_RESX=320, DOOMGENERIC_RESY=200.
-FEATURE_SOUND is not defined, so upstream's no-sound implementation is used.
+FEATURE_SOUND and DG_RAYLIB_SOUND are defined. src/i_raylibsound.c supplies
+DG_sound_module; i_sound.c excludes the SDL header, libsamplerate bindings,
+and music module registration for this backend. Music remains disabled.
 The engine is compiled as GNU C99 with wrapping signed arithmetic and without
 undefined-behavior sanitization to accommodate legacy Doom arithmetic.

@@ -9,6 +9,9 @@
 #undef DG_GetKey
 #include "doomstat.h"
 #include "doomdef.h"
+#include "i_sound.h"
+#include "sounds.h"
+#include "m_argv.h"
 #include <assert.h>
 
 static int frames, start_tic;
@@ -47,6 +50,20 @@ int main(int argc, char **argv)
     puts("SMOKE: starting engine");
     doomgeneric_Create(argc, argv);
     puts("SMOKE: engine initialized");
+    if (M_CheckParm("-nosound") || M_CheckParm("-nosfx"))
+        assert(!IsAudioDeviceReady());
+    if (M_CheckParm("-soundcheck")) {
+        assert(IsAudioDeviceReady());
+        assert(I_StartSound(&S_sfx[sfx_sawful], 0, 127, 0) == 0);
+        assert(I_StartSound(&S_sfx[sfx_sawful], 1, 127, 254) == 1);
+        assert(I_SoundIsPlaying(0) && I_SoundIsPlaying(1));
+        I_UpdateSoundParams(0, 32, 254);
+        assert(I_SoundIsPlaying(0) && I_SoundIsPlaying(1));
+        I_StopSound(0);
+        assert(!I_SoundIsPlaying(0) && I_SoundIsPlaying(1));
+        I_StopSound(1);
+        puts("SMOKE AUDIO PASS: real WAD, audio device, simultaneous aliases, live update and independent stop");
+    }
     start_tic = gametic; ready = true;
     start_x = players[consoleplayer].mo->x; start_y = players[consoleplayer].mo->y;
     for (;;) { poll_input(); doomgeneric_Tick(); }

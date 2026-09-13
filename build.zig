@@ -12,8 +12,14 @@ pub fn build(b: *std.Build) void {
     mod.addIncludePath(b.path("vendor/doomgeneric"));
     mod.addCMacro("DOOMGENERIC_RESX", "320");
     mod.addCMacro("DOOMGENERIC_RESY", "200");
+    mod.addCMacro("FEATURE_SOUND", "1");
+    mod.addCMacro("DG_RAYLIB_SOUND", "1");
     mod.addCSourceFiles(.{
         .files = if (smoke) &.{"tests/smoke.c"} else &.{"src/main.c"},
+        .flags = &.{ "-std=c99", "-Wall", "-Wextra" },
+    });
+    mod.addCSourceFiles(.{
+        .files = &.{"src/i_raylibsound.c"},
         .flags = &.{ "-std=c99", "-Wall", "-Wextra" },
     });
     mod.addCSourceFiles(.{
@@ -105,10 +111,20 @@ pub fn build(b: *std.Build) void {
     const raylib = b.dependency("raylib", .{
         .target = target,
         .optimize = optimize,
-        .raudio = false,
+        .raudio = true,
         .rmodels = false,
     });
     mod.linkLibrary(raylib.artifact("raylib"));
+    const sound_tests_mod = b.createModule(.{ .target = target, .optimize = .Debug, .link_libc = true });
+    sound_tests_mod.addIncludePath(b.path("vendor/doomgeneric"));
+    sound_tests_mod.addIncludePath(raylib.path("src"));
+    sound_tests_mod.addCSourceFiles(.{
+        .files = &.{"tests/sound.c"},
+        .flags = &.{ "-std=c99", "-Wall", "-Wextra" },
+    });
+    const sound_tests = b.addExecutable(.{ .name = "sound-tests", .root_module = sound_tests_mod });
+    const run_sound_tests = b.addRunArtifact(sound_tests);
+    b.step("test", "Test DMX decoding and sound channel lifecycle without an audio device").dependOn(&run_sound_tests.step);
     const exe = b.addExecutable(.{ .name = if (smoke) "ziggy-doom-smoke" else "ziggy-doom", .root_module = mod });
     b.installArtifact(exe);
     const run = b.addRunArtifact(exe);

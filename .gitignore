@@ -42,3 +42,6 @@ Desktop.ini
 *.swp
 *.swo
 *~
+
+# SoundFonts
+*.sf2

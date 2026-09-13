@@ -1,6 +1,6 @@
 # ziggy-doom
 
-Doom の C エンジンを Zig でコンパイルし、raylib で表示・キーボード入力を行う最小ポートです。Zig はビルド定義と C コンパイラとしてだけ使用します。音声・マウス・ネットワーク対戦は対象外です。
+Doom の C エンジンを Zig でコンパイルし、raylib で表示・キーボード入力・効果音再生を行う最小ポートです。Zig はビルド定義と C コンパイラとしてだけ使用します。音楽・マウス・ネットワーク対戦は対象外です。
 
 ## 必要なもの
 
@@ -48,8 +48,10 @@ zig build -Doptimize=ReleaseFast
 ## 構成
 
 - `src/main.c`: raylib バックエンド。画面転送、色変換、入力、タイマー、終了処理。
+- `src/i_raylibsound.c`: 効果音バックエンド。WAD 内の DMX PCM をキャッシュし、チャンネルごとの alias で同時再生。再生中もエンジンから距離減衰・左右定位の更新を受け取ります。
+- `src/dmx_sound.h`: DMX ヘッダーと PCM 範囲の検証。
 - `vendor/doomgeneric/`: doomgeneric の C ソースとヘッダー。
-- `build.zig`: エンジンとバックエンドを C としてビルドし、音声無効の raylib をリンク。
+- `build.zig`: エンジンとバックエンドを C としてビルドし、音声有効の raylib をリンク。
 - `vendor/doomgeneric/UPSTREAM.md`: 取得元と変更点。
 
 ## 動作確認
@@ -57,10 +59,17 @@ zig build -Doptimize=ReleaseFast
 Windows x86_64 / Zig 0.16.0 と手元の `doom2.wad` でビルド・描画を確認済みです。実エンジンに前進・射撃入力を渡し、座標の変化と弾数の減少を検証するテストもあります。
 
 ```powershell
+zig build test
 zig build run -Dsmoke=true -- -iwad doom2.wad -warp 1 -nomonsters -nogui
+# 音声デバイスと実 WAD の効果音再生も検証
+zig build run -Dsmoke=true -- -iwad doom2.wad -warp 1 -nomonsters -nogui -soundcheck
 ```
 
 テストは自動終了し、`.tmp/doom-smoke.png` に描画結果を保存します。実際のキーボードを自動操作するテストではありません。他 OS は未検証です。
+
+`zig build test` は音声デバイス不要で、不正な DMX データ、同一音源の同時再生、再生中の音量・定位更新、チャンネル差し替え・解放、デバイス初期化失敗を検証します。`-soundcheck` は音声デバイスが必要です。効果音は `-nosfx` または `-nosound` で無効にできます。デバイスを開けない場合も無音で続行します。
+
+効果音は起動時に変換して終了まで保持します。`snd_cachesize` による追い出しは未対応です。定位は raylib のパンカーブを使うため、元の SDL バックエンドとは音量特性が多少異なります。
 
 ## ライセンス
 
