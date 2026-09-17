@@ -126,6 +126,20 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .raudio = true,
         .rmodels = false,
+        // Doom renders the complete frame; raylib only displays the texture.
+        .rtext = false,
+        .rshapes = false,
+        // Sound effects and ZiggySynth supply decoded PCM, so no audio codecs
+        // are needed. Keep PNG export for the integration smoke screenshot.
+        .config = "-DSUPPORT_FILEFORMAT_WAV=0 -DSUPPORT_FILEFORMAT_OGG=0 " ++
+            "-DSUPPORT_FILEFORMAT_MP3=0 -DSUPPORT_FILEFORMAT_QOA=0 " ++
+            "-DSUPPORT_FILEFORMAT_XM=0 -DSUPPORT_FILEFORMAT_MOD=0 " ++
+            "-DSUPPORT_GESTURES_SYSTEM=0 -DSUPPORT_MOUSE_GESTURES=0 " ++
+            "-DSUPPORT_AUTOMATION_EVENTS=0 -DSUPPORT_CLIPBOARD_IMAGE=0 " ++
+            "-DSUPPORT_SCREEN_CAPTURE=0 -DSUPPORT_COMPRESSION_API=0 " ++
+            "-DSUPPORT_IMAGE_GENERATION=0 -DSUPPORT_FILEFORMAT_BMP=0 " ++
+            "-DSUPPORT_FILEFORMAT_GIF=0 -DSUPPORT_FILEFORMAT_QOI=0 " ++
+            "-DSUPPORT_FILEFORMAT_DDS=0",
     });
     mod.linkLibrary(raylib.artifact("raylib"));
     const sound_tests_mod = b.createModule(.{ .target = target, .optimize = .Debug, .link_libc = true });
