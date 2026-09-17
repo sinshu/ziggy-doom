@@ -137,7 +137,18 @@ pub fn build(b: *std.Build) void {
     });
     const sound_tests = b.addExecutable(.{ .name = "sound-tests", .root_module = sound_tests_mod });
     const run_sound_tests = b.addRunArtifact(sound_tests);
-    b.step("test", "Test DMX decoding and sound channel lifecycle without an audio device").dependOn(&run_sound_tests.step);
+    const test_step = b.step("test", "Test string comparisons, DMX decoding and sound channel lifecycle");
+    test_step.dependOn(&run_sound_tests.step);
+    const string_tests_mod = b.createModule(.{ .target = target, .optimize = optimize, .link_libc = true });
+    string_tests_mod.addIncludePath(b.path("vendor/doomgeneric"));
+    string_tests_mod.addCSourceFiles(.{
+        .files = &.{"tests/string_compare.c"},
+        .flags = &.{ "-std=c99", "-Wall", "-Wextra" },
+    });
+    const string_tests = b.addExecutable(.{ .name = "string-tests", .root_module = string_tests_mod });
+    const run_string_tests = b.addRunArtifact(string_tests);
+    run_string_tests.addArg("SW1BRCOM");
+    test_step.dependOn(&run_string_tests.step);
     const exe = b.addExecutable(.{ .name = if (smoke) "ziggy-doom-smoke" else "ziggy-doom", .root_module = mod });
     b.installArtifact(exe);
     const run = b.addRunArtifact(exe);

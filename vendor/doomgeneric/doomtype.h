@@ -27,6 +27,10 @@
 
 #ifdef _WIN32
 
+// Read the CRT declarations before defining aliases: MinGW's inline
+// str[n]casecmp wrappers would otherwise be renamed to call themselves.
+#include <string.h>
+
 #define strcasecmp _stricmp
 #define strncasecmp _strnicmp
 
